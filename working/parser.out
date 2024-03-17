@@ -1,0 +1,69 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> PRINT expression
+Rule 2     expression -> STRING
+Rule 3     expression -> NUMBER
+
+Terminals, with rules where they appear
+
+NUMBER               : 3
+PRINT                : 1
+STRING               : 2
+error                : 
+
+Nonterminals, with rules where they appear
+
+expression           : 1
+statement            : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . PRINT expression
+
+    PRINT           shift and go to state 2
+
+    statement                      shift and go to state 1
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> PRINT . expression
+    (2) expression -> . STRING
+    (3) expression -> . NUMBER
+
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+
+    expression                     shift and go to state 3
+
+state 3
+
+    (1) statement -> PRINT expression .
+
+    $end            reduce using rule 1 (statement -> PRINT expression .)
+
+
+state 4
+
+    (2) expression -> STRING .
+
+    $end            reduce using rule 2 (expression -> STRING .)
+
+
+state 5
+
+    (3) expression -> NUMBER .
+
+    $end            reduce using rule 3 (expression -> NUMBER .)
+
