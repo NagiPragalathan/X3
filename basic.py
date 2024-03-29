@@ -2227,17 +2227,15 @@ global_symbol_table.set("RUN", BuiltInFunction.run)
 
 
 """
-Lex :object
-tokens: list
+Lex :Object(string)
+tokens: list[string]
 full_code:string
-
-ast: object
-parser: object
-result :object
-context object
-symbol_table: [value:object]
+ast: object(string)
+parser: object(string)
+result :object(string)
+context object(string)
+symbol_table: [value:object(string)]
 ExecutionTime: int
-
 result: value
 
 """
