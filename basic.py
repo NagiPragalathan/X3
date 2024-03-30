@@ -23,10 +23,15 @@ DIGITS = '0123456789'
 LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 PYDATA = {}
-W3 =  Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+#-------------- Web3 --------------------
+W3 =  Web3(Web3.HTTPProvider("https://polygon-mumbai.g.alchemy.com/v2/mn-3ohp2vXDjCM0jyeRq7J0shVhblg-l"))
 CONTRACT_ADDRESS= '0xA35725FfEfebF41B667167D0fd124cd43b59CC09'
 CURRENT_PATH = os.getcwd()
 ABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','new_contract_abi.json')
+PRIVATE_KEY = "6c2a1c294e30f4990fdc7735e92c69d232e756f70a8234a01343b571fa05c05e"
+#-------------- Terminal---------------
+COL = os.terminal_size().columns
+LINE = os.terminal_size().lines
 
 #######################################
 # ERRORS
@@ -2259,11 +2264,7 @@ def run(fn, text):
   start_time = time.time()
   lexer = Lexer(fn, text)
   tokens, error = lexer.make_tokens()
-  ############################################### For Web3 ##########################################################
 
-  with open('C:/Users/nagip/OneDrive/Desktop/X3/Solidity/new_contract_abi.json', 'r') as f:
-      abi = json.load(f)
-  print(current_path)
   if error: return None, error
   # print(tokens)
   
@@ -2287,8 +2288,24 @@ def run(fn, text):
   # Calculate the elapsed time
   elapsed_time = end_time - start_time
   # print(elapsed_time)
-  contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
 
+  ############################################### For Web3 ##########################################################
+
+  with open(ABI_OF_CONTRACT, 'r') as f:
+      abi = json.load(f)
+  contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
+  transaction = contract.functions.setData(str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb").build_transaction({
+    'chainId': 80001,  # Polygon chain ID
+    'from': "0xECcF626e4bD9f685e2F7763121CE75619D0675bb",
+    'gas': 2100000,  # Adjust gas limit accordingly
+    'gasPrice': W3.to_wei('50', 'gwei'),
+    'nonce': W3.eth.get_transaction_count("0xECcF626e4bD9f685e2F7763121CE75619D0675bb")
+  })
+  signed_tx = W3.eth.account.sign_transaction(transaction, PRIVATE_KEY)
+  tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
+  tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
+  if PYDATA.get('ack',''):
+     print(tx_receipt)
 
 
   return result.value, result.error
