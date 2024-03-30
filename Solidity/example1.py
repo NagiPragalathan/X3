@@ -61,6 +61,7 @@ tx_hash = web3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
 # Wait for transaction receipt
 tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+print(tx_receipt.contractAddress)
 
 # Print transaction receipt
 print("Transaction receipt:", tx_receipt)

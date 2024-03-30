@@ -1,11 +1,4 @@
-# {"pk":"6c2a1c294e30f4990fdc7735e92c69d232e756f70a8234a01343b571fa05c05e", "chain":"polygonzkevm", "network":"testnet", "account":"0xECcF626e4bD9f685e2F7763121CE75619D0675bb", "provider":"https://polygon-mumbai.g.alchemy.com/v2/mn-3ohp2vXDjCM0jyeRq7J0shVhblg-l", "language":"", "ack": false, "ackBc":true}
-
-pyexe("
-
-
-
-from ursina import *
-from ursina import Button
+exec("""from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 app = Ursina()
@@ -34,17 +27,17 @@ for z in range(8):
 # Define the input function to handle mouse clicks
 def input(key):
     if key == 'left mouse down':
+        print('Left mouse clicked')
         hit_info = raycast(camera.world_position, camera.forward, distance=5)
+        print('Hit info:', hit_info)
         if hit_info.hit:
+            print('Voxel position:', hit_info.entity.position + hit_info.normal)
             create_voxel(position=hit_info.entity.position + hit_info.normal)
     if key == 'right mouse down' and mouse.hovered_entity:
+        print('Right mouse clicked')
         destroy(mouse.hovered_entity)
 
 player = FirstPersonController()
 
 app.run()
-
-
-")
-
-show("runned...!")
+""")

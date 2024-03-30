@@ -1735,6 +1735,7 @@ class BuiltInFunction(BaseFunction):
   execute_print_ret.arg_names = ['value']
 
   def execute_pyexe(self, exec_ctx):
+    print(str(exec_ctx.symbol_table.get('value')))
     exec(str(exec_ctx.symbol_table.get('value')))
     return RTResult().success(String('1'))
   execute_pyexe.arg_names = ['value']

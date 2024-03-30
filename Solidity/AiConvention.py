@@ -16,14 +16,11 @@ import os
 load_dotenv()
 
 text_data = """
-VAR counter = 0
-FUN inc(num)
-    VAR counter = counter + 1
-END
-FUN dec(num)
-    VAR counter = counter - 1
-END
-
+var x = 1
+fun inc()
+    var x = x + 1
+fun dec()
+    var x = x - 1
 """
 
 api_key = os.getenv("OPENAI_API_KEY")
