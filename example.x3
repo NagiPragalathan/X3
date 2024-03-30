@@ -1,5 +1,13 @@
+# {"pk":"xyz", "chain":"polygonzkevm", "network":"mainnet", "provider":"https://polygonzkevm-mainnet.g.alchemy.com/v2/58Dm_Z3kNnpx3ALgcgv4UhM-xZlgKmkd", "language":"", "ack": true}
+
+PYEXE("import random
+var = random.choice([1,2,3,4])
+print(var)
+")
+
 # {"ack":false}
 
+<<<<<<< HEAD
 IF 10 and 2 THEN
     PRINT("true")
 ELSE
@@ -7,3 +15,12 @@ ELSE
 END
 
 
+=======
+var counter = 0
+fun inc(num)
+    var counter = counter + 1
+end
+fun dec(num)
+    var counter = counter - 1
+end
+>>>>>>> aeb5a0dc545eb2ccb920d59fd95cd905ea5ff34a
