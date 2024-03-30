@@ -132,8 +132,8 @@ TT_NEWLINE		= 'NEWLINE'
 TT_EOF				= 'EOF'
 
 KEYWORDS = [
-  'VAR',
-  'AND',
+  'var',
+  'and',
   'OR',
   'NOT',
   'IF',

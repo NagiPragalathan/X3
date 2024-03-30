@@ -6,10 +6,11 @@ print(var)
 ")
 
 # {"ack":false}
-VAR counter = 0
+
+var counter = 0
 FUN inc(num)
-    VAR counter = counter + 1
+    var counter = counter + 1
 END
 FUN dec(num)
-    VAR counter = counter - 1
+    var counter = counter - 1
 END
