@@ -1848,10 +1848,12 @@ class BuiltInFunction(BaseFunction):
     try:
       with open(fn, "r") as f:
         script = f.read()
+      firstHash = False
       for i in script.split('\n'):
         i = i.strip()
         if '#' in i and i.startswith('#'):
           # pass
+          firstHash=True
           repl =i.replace("#", "").strip()
           print(repl)
           try:
@@ -1862,10 +1864,17 @@ class BuiltInFunction(BaseFunction):
                 print("Provider Connected...")
               else:
                 print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
-
+            if firstHash:
+              break
           except Exception as e:
             print('Key Initializing error :', e)
-            exit()
+            if firstHash:
+              break
+
+        
+        
+
+          
 
 
     except Exception as e:
