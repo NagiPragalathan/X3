@@ -37,6 +37,14 @@ def do_line():
   COL = SIZE.columns
   LINE = SIZE.lines
   print("-"*COL)
+
+def word_line(word):
+  SIZE = os.get_terminal_size()
+  COL = SIZE.columns
+  LINE = SIZE.lines
+  actual_col = COL - len(word)
+  halfofcol = actual_col / 2
+  print("-"*int(halfofcol) + word + "-"*int(halfofcol))
 #----------------- Error ---------------
 ErrorMsg = True
 PkErrorMsg = True
@@ -1876,7 +1884,7 @@ class BuiltInFunction(BaseFunction):
           repl =i.replace("#", "").strip()
           try:
             PYDATA = json.loads(i.replace("#", ""))
-            if PYDATA.get('provider',''): # Here the program verify the given json data
+            if PYDATA.get('provider','') and PYDATA.get('ack',''): # Here the program verify the given json data
               PROVIDER = PYDATA["provider"]
               W3 =  Web3(Web3.HTTPProvider(PROVIDER))
               IS_WEB3 = True
@@ -1884,12 +1892,15 @@ class BuiltInFunction(BaseFunction):
                 do_line()
                 print("Provider Connected...")
                 do_line()
-              else:
+                word_line("Output details")
+              elif PYDATA.get('ack',''):
+                word_line("Warning: Provider is not Connected")
+                print("Check the data : ", str(PYDATA))
                 do_line()
-                print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
-                do_line()
-            else:
-              print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
+            elif PYDATA.get('ack',''):
+              word_line("Warning: Provider is not Connected")
+              print("Check the data : ",str(PYDATA))
+              do_line()
             if firstHash:
               break
           except Exception as e:
@@ -2306,7 +2317,7 @@ def run(fn, text):
     elapsed_time = end_time - start_time
     # print(elapsed_time)
 
-  
+    # do_line()
     if IS_WEB3:
       if PYDATA.get("account"):
         if PYDATA.get("pk"):

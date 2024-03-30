@@ -2,12 +2,21 @@ import basic
 import json
 from web3 import Web3
 import os
+import time
 
 def do_line():
   SIZE = os.get_terminal_size()
   COL = SIZE.columns
   LINE = SIZE.lines
   print("-"*COL)
+
+def word_line(word):
+  SIZE = os.get_terminal_size()
+  COL = SIZE.columns
+  LINE = SIZE.lines
+  actual_col = COL - len(word)
+  halfofcol = actual_col / 2
+  print("-"*int(halfofcol) + word + "-"*int(halfofcol))
 
 
 
@@ -25,6 +34,7 @@ while True:
 			print(repr(result))
 	else:
     ############################################### For Web3 ##########################################################
+		start_time = time.time()
 		with open(result[0].get("ABI_OF_CONTRACT"), 'r') as f:
 			abi = json.load(f)
 		W3 = Web3(Web3.HTTPProvider(result[0].get("PROVIDER")))
@@ -35,12 +45,17 @@ while True:
 			'gas': 2100000,  # Adjust gas limit accordingly
 			'gasPrice': W3.to_wei('50', 'gwei'),
 			'nonce': W3.eth.get_transaction_count("0xECcF626e4bD9f685e2F7763121CE75619D0675bb")
-      	})
+    	})
 		signed_tx = W3.eth.account.sign_transaction(transaction, result[0].get("PRIVATE_KEY"))
 		tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
 		tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
+		end_time = time.time()	
+		# Calculate the elapsed time
+		elapsed_time = end_time - start_time
 		if result[2].get('ack',''):
 			do_line()
 			print(tx_receipt)
-			print("Program Executed within: " + str(result[1][8])+"s")
-			do_line()
+		word_line("\nExecution Details\n")
+		print("Program Executed within: " + str(result[1][8])+"s","\t\t\t Blockchain Execution Time: " + str(elapsed_time))
+		print("\n")
+		do_line()
