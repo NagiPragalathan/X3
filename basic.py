@@ -24,14 +24,17 @@ LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 PYDATA = {}
 #-------------- Web3 --------------------
-W3 =  Web3(Web3.HTTPProvider("https://polygon-mumbai.g.alchemy.com/v2/mn-3ohp2vXDjCM0jyeRq7J0shVhblg-l"))
+PROVIDER = ""
+W3 =  ""
 CONTRACT_ADDRESS= '0xA35725FfEfebF41B667167D0fd124cd43b59CC09'
 CURRENT_PATH = os.getcwd()
 ABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','new_contract_abi.json')
 PRIVATE_KEY = "6c2a1c294e30f4990fdc7735e92c69d232e756f70a8234a01343b571fa05c05e"
+IS_WEB3 = False
 #-------------- Terminal---------------
-COL = os.terminal_size().columns
-LINE = os.terminal_size().lines
+SIZE = os.get_terminal_size()
+COL = SIZE.columns
+LINE = SIZE.lines
 
 #######################################
 # ERRORS
@@ -1843,7 +1846,8 @@ class BuiltInFunction(BaseFunction):
   execute_len.arg_names = ["list"]
 
   def execute_run(self, exec_ctx):
-    global PYDATA, W3
+    global W3, CONTRACT_ADDRESS, ABI_OF_CONTRACT, IS_WEB3, PRIVATE_KEY, PYDATA, PROVIDER
+
     fn = exec_ctx.symbol_table.get("fn")
 
     if not isinstance(fn, String):
@@ -1862,15 +1866,16 @@ class BuiltInFunction(BaseFunction):
       for i in script.split('\n'):
         i = i.strip()
         if '#' in i and i.startswith('#'):
-          # pass
           firstHash=True
           repl =i.replace("#", "").strip()
-          print(repl)
           try:
             PYDATA = json.loads(i.replace("#", ""))
-            W3 =  Web3(Web3.HTTPProvider(PYDATA["provider"]))
-            if PYDATA.get('ack',''):
-              if W3.is_connected():
+            print(PYDATA.get('pk',''), PYDATA.get('provider',''))
+            if PYDATA.get('pk','') and PYDATA.get('provider',''): # Here the program verify the given json data
+              PROVIDER = PYDATA["provider"]
+              W3 =  Web3(Web3.HTTPProvider(PROVIDER))
+              IS_WEB3 = True
+              if PYDATA.get('ack','') and W3.is_connected():
                 print("Provider Connected...")
               else:
                 print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
@@ -2260,52 +2265,59 @@ result: value
 """
 
 def run(fn, text):
-  # Generate tokens
-  start_time = time.time()
-  lexer = Lexer(fn, text)
-  tokens, error = lexer.make_tokens()
+    global W3, CONTRACT_ADDRESS, ABI_OF_CONTRACT, IS_WEB3, PRIVATE_KEY, PYDATA, PROVIDER
+    # Generate tokens
+    start_time = time.time()
+    lexer = Lexer(fn, text)
+    tokens, error = lexer.make_tokens()
 
-  if error: return None, error
-  # print(tokens)
-  
-  # Generate AST
-  parser = Parser(tokens)
-  ast = parser.parse()
-  # print(parser, ast, global_symbol_table.get_all_data())
-  if ast.error: return None, ast.error
-
-
-  # Run program
-  interpreter = Interpreter()
-  context = Context('<program>')
-  # print(context)
-  context.symbol_table = global_symbol_table
-
-  result = interpreter.visit(ast.node, context)
-  # print(result)
-  end_time = time.time()
-
-  # Calculate the elapsed time
-  elapsed_time = end_time - start_time
-  # print(elapsed_time)
-
-  ############################################### For Web3 ##########################################################
-
-  with open(ABI_OF_CONTRACT, 'r') as f:
-      abi = json.load(f)
-  contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
-  transaction = contract.functions.setData(str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb").build_transaction({
-    'chainId': 80001,  # Polygon chain ID
-    'from': "0xECcF626e4bD9f685e2F7763121CE75619D0675bb",
-    'gas': 2100000,  # Adjust gas limit accordingly
-    'gasPrice': W3.to_wei('50', 'gwei'),
-    'nonce': W3.eth.get_transaction_count("0xECcF626e4bD9f685e2F7763121CE75619D0675bb")
-  })
-  signed_tx = W3.eth.account.sign_transaction(transaction, PRIVATE_KEY)
-  tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
-  tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
-  if PYDATA.get('ack',''):
-     print(tx_receipt)
+    if error: return None, error
+    # print(tokens)
+    
+    # Generate AST
+    parser = Parser(tokens)
+    ast = parser.parse()
+    # print(parser, ast, global_symbol_table.get_all_data())
+    if ast.error: return None, ast.error
 
 
-  return result.value, result.error
+    # Run program
+    interpreter = Interpreter()
+    context = Context('<program>')
+    # print(context)
+    context.symbol_table = global_symbol_table
+
+    result = interpreter.visit(ast.node, context)
+    # print(result)
+    end_time = time.time()
+
+    # Calculate the elapsed time
+    elapsed_time = end_time - start_time
+    # print(elapsed_time)
+
+    ############################################### For Web3 ##########################################################
+    
+    # if IS_WEB3:
+    #   with open(ABI_OF_CONTRACT, 'r') as f:
+    #       abi = json.load(f)
+    #   contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
+    #   transaction = contract.functions.setData(str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb").build_transaction({
+    #     'chainId': 80001,  # Polygon chain ID
+    #     'from': "0xECcF626e4bD9f685e2F7763121CE75619D0675bb",
+    #     'gas': 2100000,  # Adjust gas limit accordingly
+    #     'gasPrice': W3.to_wei('50', 'gwei'),
+    #     'nonce': W3.eth.get_transaction_count("0xECcF626e4bD9f685e2F7763121CE75619D0675bb")
+    #   })
+    #   signed_tx = W3.eth.account.sign_transaction(transaction, PRIVATE_KEY)
+    #   tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
+    #   tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
+    #   if PYDATA.get('ack',''):
+    #     print(tx_receipt)
+    # else:
+    #   if PYDATA.get('ack',''):
+    #     print("NO WEB3 Data FOUND")
+    if IS_WEB3:
+      result.value = 1
+      result.error = [{"ABI_OF_CONTRACT":PRIVATE_KEY, "CONTRACT_ADDRESS":CONTRACT_ADDRESS, "PROVIDER":PROVIDER, "PRIVATE_KEY":PRIVATE_KEY},[str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb"]]
+
+    return result.value, result.error

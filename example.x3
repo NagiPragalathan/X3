@@ -1,26 +1,10 @@
-# {"pk":"xyz", "chain":"polygonzkevm", "network":"mainnet", "provider":"https://polygonzkevm-mainnet.g.alchemy.com/v2/58Dm_Z3kNnpx3ALgcgv4UhM-xZlgKmkd", "language":"", "ack": true}
-
-PYEXE("import random
-var = random.choice([1,2,3,4])
-print(var)
-")
-
-# {"ack":false}
-
-<<<<<<< HEAD
-IF 10 and 2 THEN
-    PRINT("true")
-ELSE
-    PRINT("false")
-END
-
-
-=======
-var counter = 0
+# {"pk":"xyz", "chain":"polygonzkevm", "network":"testnet", "provider":"https://polygon-mumbai.g.alchemy.com/v2/mn-3ohp2vXDjCM0jyeRq7J0shVhblg-l", "language":"", "ack": true}
+var counter = 858
 fun inc(num)
     var counter = counter + 1
 end
 fun dec(num)
     var counter = counter - 1
 end
->>>>>>> aeb5a0dc545eb2ccb920d59fd95cd905ea5ff34a
+
+show("runned...!")
