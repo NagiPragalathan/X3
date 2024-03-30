@@ -24,6 +24,9 @@ LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 PYDATA = {}
 W3 =  Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+CONTRACT_ADDRESS= '0xA35725FfEfebF41B667167D0fd124cd43b59CC09'
+CURRENT_PATH = os.getcwd()
+ABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','new_contract_abi.json')
 
 #######################################
 # ERRORS
@@ -2256,29 +2259,36 @@ def run(fn, text):
   start_time = time.time()
   lexer = Lexer(fn, text)
   tokens, error = lexer.make_tokens()
+  ############################################### For Web3 ##########################################################
+
+  with open('C:/Users/nagip/OneDrive/Desktop/X3/Solidity/new_contract_abi.json', 'r') as f:
+      abi = json.load(f)
+  print(current_path)
   if error: return None, error
-  print(tokens)
+  # print(tokens)
   
   # Generate AST
   parser = Parser(tokens)
   ast = parser.parse()
-  print(parser, ast, global_symbol_table.get_all_data())
+  # print(parser, ast, global_symbol_table.get_all_data())
   if ast.error: return None, ast.error
 
 
   # Run program
   interpreter = Interpreter()
   context = Context('<program>')
-  print(context)
+  # print(context)
   context.symbol_table = global_symbol_table
 
   result = interpreter.visit(ast.node, context)
-  print(result)
+  # print(result)
   end_time = time.time()
 
   # Calculate the elapsed time
   elapsed_time = end_time - start_time
-  print(elapsed_time)
+  # print(elapsed_time)
+  contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
+
 
 
   return result.value, result.error
