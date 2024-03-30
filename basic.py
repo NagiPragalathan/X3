@@ -29,12 +29,17 @@ W3 =  ""
 CONTRACT_ADDRESS= '0xA35725FfEfebF41B667167D0fd124cd43b59CC09'
 CURRENT_PATH = os.getcwd()
 ABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','new_contract_abi.json')
-PRIVATE_KEY = "6c2a1c294e30f4990fdc7735e92c69d232e756f70a8234a01343b571fa05c05e"
+PRIVATE_KEY = ""
 IS_WEB3 = False
 #-------------- Terminal---------------
 SIZE = os.get_terminal_size()
 COL = SIZE.columns
 LINE = SIZE.lines
+
+#----------------- Error ---------------
+ErrorMsg = True
+PkErrorMsg = True
+
 
 #######################################
 # ERRORS
@@ -1871,7 +1876,7 @@ class BuiltInFunction(BaseFunction):
           try:
             PYDATA = json.loads(i.replace("#", ""))
             print(PYDATA.get('pk',''), PYDATA.get('provider',''))
-            if PYDATA.get('pk','') and PYDATA.get('provider',''): # Here the program verify the given json data
+            if PYDATA.get('provider',''): # Here the program verify the given json data
               PROVIDER = PYDATA["provider"]
               W3 =  Web3(Web3.HTTPProvider(PROVIDER))
               IS_WEB3 = True
@@ -1879,6 +1884,8 @@ class BuiltInFunction(BaseFunction):
                 print("Provider Connected...")
               else:
                 print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
+            else:
+              print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
             if firstHash:
               break
           except Exception as e:
@@ -2265,7 +2272,7 @@ result: value
 """
 
 def run(fn, text):
-    global W3, CONTRACT_ADDRESS, ABI_OF_CONTRACT, IS_WEB3, PRIVATE_KEY, PYDATA, PROVIDER
+    global W3, CONTRACT_ADDRESS, ABI_OF_CONTRACT, IS_WEB3, PRIVATE_KEY, PYDATA, PROVIDER, ErrorMsg, PkErrorMsg
     # Generate tokens
     start_time = time.time()
     lexer = Lexer(fn, text)
@@ -2300,7 +2307,9 @@ def run(fn, text):
     # if IS_WEB3:
     #   with open(ABI_OF_CONTRACT, 'r') as f:
     #       abi = json.load(f)
+
     #   contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
+
     #   transaction = contract.functions.setData(str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb").build_transaction({
     #     'chainId': 80001,  # Polygon chain ID
     #     'from': "0xECcF626e4bD9f685e2F7763121CE75619D0675bb",
@@ -2315,9 +2324,15 @@ def run(fn, text):
     #     print(tx_receipt)
     # else:
     #   if PYDATA.get('ack',''):
-    #     print("NO WEB3 Data FOUND")
+    #     print("NO WEB3 Data FOUND")4
     if IS_WEB3:
-      result.value = 1
-      result.error = [{"ABI_OF_CONTRACT":PRIVATE_KEY, "CONTRACT_ADDRESS":CONTRACT_ADDRESS, "PROVIDER":PROVIDER, "PRIVATE_KEY":PRIVATE_KEY},[str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb"]]
-
+      # result.value = []
+      if PYDATA.get("account"):
+        if PYDATA.get("pk"):
+          result.value = [{"ABI_OF_CONTRACT":ABI_OF_CONTRACT, "CONTRACT_ADDRESS":CONTRACT_ADDRESS, "PROVIDER":PROVIDER, "PRIVATE_KEY":PYDATA.get("pk")},[str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), str(PYDATA.get("account"))], PYDATA]
+        elif PkErrorMsg and PYDATA.get("ack"):
+          print("Private Key Not Found: Please add Private Key of your wallet")
+      elif ErrorMsg and PYDATA.get("ack"):
+        ErrorMsg = False
+        print("Account Not Found: Please add account of your sender")
     return result.value, result.error
