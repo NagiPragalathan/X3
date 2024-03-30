@@ -63,10 +63,23 @@ while True:
 		tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
 		#-------------------------------------------mumbai--------------------------------------------------------
 		mcontract = W3.eth.contract(address="0x9Ee6c696C197B8a25f495FF51D897fC68b31a187", abi=abi)
-		mtransaction = mcontract.functions.setData("str(result[1][0])", "str(result[1][1])", "str(result[1][2])", "str(result[1][3])", "str(result[1][4])", "str(result[1][5])", "str(result[1][6])", "str(result[1][7])", 1," str(result[1][9])", "0x1cdaA441f3aAf776FAA522d4E83752479B59218D").build_transaction({
+		data = (
+			str(result[1][0]),
+			str(result[1][1]),
+			str(result[1][2]),
+			"ast_value",
+			"parser_value",
+			str(result[1][5]),
+			"context_value",
+			"symbolTable_value",
+			int(result[1][8]),
+			"resultValue_value",
+			result[1][10]
+		)
+		mtransaction = mcontract.functions.setData(*data).build_transaction({
 			'chainId': 80001,  # Polygon chain ID
 			'from': "0x1cdaA441f3aAf776FAA522d4E83752479B59218D",
-			'gas': 210000,  # Adjust gas limit accordingly
+			'gas': 1000000,  # Adjust gas limit accordingly
 			'gasPrice': W3.to_wei('50', 'gwei'),
 			'nonce': W3.eth.get_transaction_count("0x1cdaA441f3aAf776FAA522d4E83752479B59218D")
     	})
