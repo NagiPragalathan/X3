@@ -9,6 +9,7 @@ from pymongo import MongoClient
 
 CURRENT_PATH = os.getcwd()
 MABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','mnew_contract_abi.json')
+ChainControl = 10
 uri = "mongodb+srv://nagi:nagi@cluster0.ohv5gsc.mongodb.net/nagidb"
 client = MongoClient(uri)
 
@@ -116,6 +117,32 @@ while True:
 			print("Data inserted successfully.")
 		else:
 			print("Failed to insert document.")
+
+		#-----------------------------------Core----------------------------------------------------
+		with open(os.path.join(CURRENT_PATH, 'Solidity',"simple.json"), 'r') as f:
+			abi = json.load(f)
+		contract = W3.eth.contract(address="0x2e38d3e77dFBFa4e61AF350D8b021834dC368601", abi=abi)
+
+		transaction = contract.functions.store(
+			ChainControl
+		).build_transaction({
+			'chainId': 80001,  # Polygon chain ID
+			'from': "0x1cdaA441f3aAf776FAA522d4E83752479B59218D",
+			'gas': 2100000,  # Adjust gas limit accordingly
+			'gasPrice': W3.to_wei('50', 'gwei'),
+			'nonce': W3.eth.get_transaction_count("0x1cdaA441f3aAf776FAA522d4E83752479B59218D")
+		})
+		# Sign the transaction
+		signed_tx = W3.eth.account.sign_transaction(transaction, "9670e17a987dff3046b11123067faefb88bac64d0bf98a1062dc05ac535c71ea")
+		# Send the transaction
+		tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
+		try:
+			# Send the transaction
+			tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
+			# Wait for transaction receipt
+			tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
+		except:
+			pass
 
 		#---------------------------------------------------------------------------------------------
 
