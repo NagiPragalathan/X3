@@ -1,3 +1,31 @@
 batch process
 
 0x771F6344205A597664EC296FCE0EE8CB6d1F58c2
+
+
+where x3
+
+Ai:
+- convert into sol
+
+
+deploy contract:
+- contract_address
+- contract_creation
+- contract_creation_by_address
+- contract_creation_by_block
+- contract_creation_by_transaction
+- contract_creation_by_transaction_hash
+
+
+web3
+- current block
+- get_balance
+- get_transaction
+- create_account
+- send_transaction
+- last_block
+- is_connected
+- accounts
+
+

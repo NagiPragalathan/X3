@@ -2,7 +2,7 @@ from web3 import Web3
 import json
 
 # Connect to the Ethereum node
-web3 = Web3(Web3.HTTPProvider('https://polygon-mumbai.g.alchemy.com/v2/K59YdNGK95akCLJrA1m9nYPZ7JYNa8Me'))
+web3 = Web3(Web3.HTTPProvider('https://polygon-mumbai.g.alchemy.com/v2/mn-3ohp2vXDjCM0jyeRq7J0shVhblg-l'))
 
 print(web3.is_connected())
 # Load contract ABI

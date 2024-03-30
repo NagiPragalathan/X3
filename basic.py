@@ -14,6 +14,7 @@ import time
 from web3 import Web3
 from eth_account import Account
 
+
 #######################################
 # CONSTANTS
 #######################################
@@ -22,7 +23,32 @@ DIGITS = '0123456789'
 LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 PYDATA = {}
-W3 =  Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+#-------------- Web3 --------------------
+PROVIDER = ""
+W3 =  ""
+CONTRACT_ADDRESS= '0xA35725FfEfebF41B667167D0fd124cd43b59CC09'
+CURRENT_PATH = os.getcwd()
+ABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','new_contract_abi.json')
+PRIVATE_KEY = ""
+IS_WEB3 = False
+#-------------- Terminal---------------
+def do_line():
+  SIZE = os.get_terminal_size()
+  COL = SIZE.columns
+  LINE = SIZE.lines
+  print("-"*COL)
+
+def word_line(word):
+  SIZE = os.get_terminal_size()
+  COL = SIZE.columns
+  LINE = SIZE.lines
+  actual_col = COL - len(word)
+  halfofcol = actual_col / 2
+  print("-"*int(halfofcol) + word + "-"*int(halfofcol))
+#----------------- Error ---------------
+ErrorMsg = True
+PkErrorMsg = True
+
 
 #######################################
 # ERRORS
@@ -1834,7 +1860,8 @@ class BuiltInFunction(BaseFunction):
   execute_len.arg_names = ["list"]
 
   def execute_run(self, exec_ctx):
-    global PYDATA, W3
+    global W3, CONTRACT_ADDRESS, ABI_OF_CONTRACT, IS_WEB3, PRIVATE_KEY, PYDATA, PROVIDER
+
     fn = exec_ctx.symbol_table.get("fn")
 
     if not isinstance(fn, String):
@@ -1853,18 +1880,27 @@ class BuiltInFunction(BaseFunction):
       for i in script.split('\n'):
         i = i.strip()
         if '#' in i and i.startswith('#'):
-          # pass
           firstHash=True
           repl =i.replace("#", "").strip()
-          print(repl)
           try:
             PYDATA = json.loads(i.replace("#", ""))
-            W3 =  Web3(Web3.HTTPProvider(PYDATA["provider"]))
-            if PYDATA.get('ack',''):
-              if W3.is_connected():
+            if PYDATA.get('provider','') and PYDATA.get('ack',''): # Here the program verify the given json data
+              PROVIDER = PYDATA["provider"]
+              W3 =  Web3(Web3.HTTPProvider(PROVIDER))
+              IS_WEB3 = True
+              if PYDATA.get('ack','') and W3.is_connected():
+                do_line()
                 print("Provider Connected...")
-              else:
-                print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
+                do_line()
+                word_line("Output details")
+              elif PYDATA.get('ack',''):
+                word_line("Warning: Provider is not Connected")
+                print("Check the data : ", str(PYDATA))
+                do_line()
+            elif PYDATA.get('ack',''):
+              word_line("Warning: Provider is not Connected")
+              print("Check the data : ",str(PYDATA))
+              do_line()
             if firstHash:
               break
           except Exception as e:
@@ -2251,33 +2287,45 @@ result: value
 """
 
 def run(fn, text):
-  # Generate tokens
-  start_time = time.time()
-  lexer = Lexer(fn, text)
-  tokens, error = lexer.make_tokens()
-  if error: return None, error
-  print(tokens)
-  
-  # Generate AST
-  parser = Parser(tokens)
-  ast = parser.parse()
-  print(parser, ast, global_symbol_table.get_all_data())
-  if ast.error: return None, ast.error
+    global W3, CONTRACT_ADDRESS, ABI_OF_CONTRACT, IS_WEB3, PRIVATE_KEY, PYDATA, PROVIDER, ErrorMsg, PkErrorMsg
+    # Generate tokens
+    start_time = time.time()
+    lexer = Lexer(fn, text)
+    tokens, error = lexer.make_tokens()
+
+    if error: return None, error
+    # print(tokens)
+    
+    # Generate AST
+    parser = Parser(tokens)
+    ast = parser.parse()
+    # print(parser, ast, global_symbol_table.get_all_data())
+    if ast.error: return None, ast.error
 
 
-  # Run program
-  interpreter = Interpreter()
-  context = Context('<program>')
-  print(context)
-  context.symbol_table = global_symbol_table
+    # Run program
+    interpreter = Interpreter()
+    context = Context('<program>')
+    # print(context)
+    context.symbol_table = global_symbol_table
 
-  result = interpreter.visit(ast.node, context)
-  print(result)
-  end_time = time.time()
+    result = interpreter.visit(ast.node, context)
+    # print(result)
+    end_time = time.time()
 
-  # Calculate the elapsed time
-  elapsed_time = end_time - start_time
-  print(elapsed_time)
+    # Calculate the elapsed time
+    elapsed_time = end_time - start_time
+    # print(elapsed_time)
 
-
-  return result.value, result.error
+    # do_line()
+    if IS_WEB3:
+      if PYDATA.get("account"):
+        if PYDATA.get("pk"):
+          result.value = [{"ABI_OF_CONTRACT":ABI_OF_CONTRACT, "CONTRACT_ADDRESS":CONTRACT_ADDRESS, "PROVIDER":PROVIDER, "PRIVATE_KEY":PYDATA.get("pk")},[str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), elapsed_time, str(result), str(PYDATA.get("account"))], PYDATA]
+        elif PkErrorMsg and PYDATA.get("ack"):
+          PkErrorMsg = False
+          print("Private Key Not Found: Please add Private Key of your wallet")
+      elif ErrorMsg and PYDATA.get("ack"):
+        ErrorMsg = False
+        print("Account Not Found: Please add account of your sender")
+    return result.value, result.error
