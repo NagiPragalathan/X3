@@ -133,7 +133,7 @@ TT_EOF				= 'EOF'
 
 KEYWORDS = [
   'var',
-  'AND',
+  'and',
   'OR',
   'NOT',
   'IF',
@@ -682,7 +682,7 @@ class Parser:
       if res.error: return res
       return res.success(VarAssignNode(var_name, expr))
 
-    node = res.register(self.bin_op(self.comp_expr, ((TT_KEYWORD, 'AND'), (TT_KEYWORD, 'OR'))))
+    node = res.register(self.bin_op(self.comp_expr, ((TT_KEYWORD, 'and'), (TT_KEYWORD, 'OR'))))
 
     if res.error:
       return res.failure(InvalidSyntaxError(
@@ -2045,7 +2045,7 @@ class Interpreter:
       result, error = left.get_comparison_lte(right)
     elif node.op_tok.type == TT_GTE:
       result, error = left.get_comparison_gte(right)
-    elif node.op_tok.matches(TT_KEYWORD, 'AND'):
+    elif node.op_tok.matches(TT_KEYWORD, 'and'):
       result, error = left.anded_by(right)
     elif node.op_tok.matches(TT_KEYWORD, 'OR'):
       result, error = left.ored_by(right)

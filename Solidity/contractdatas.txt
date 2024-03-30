@@ -1,0 +1,3 @@
+contract id : 0xA35725FfEfebF41B667167D0fd124cd43b59CC09
+deployed user address : 0xECcF626e4bD9f685e2F7763121CE75619D0675bb
+new_contract_abi.json file

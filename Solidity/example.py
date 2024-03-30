@@ -30,7 +30,6 @@ execution_time = 1234567890
 result_value = 'Sample result value'
 ipfs_data = 'Sample IPFS data'
 
-contract_address = "0xECcF626e4bD9f685e2F7763121CE75619D0675bb"
 
 # Create the transaction
 transaction = contract.functions.setData(
@@ -46,6 +45,7 @@ transaction = contract.functions.setData(
     "result_value",
 ).build_transaction({
     'chainId': 80001,  # Polygon chain ID
+    'from': "0xF1d091C2B86c9f5b92F637e553EF5D2f3fA9F7b7",
     'gas': 2100000,  # Adjust gas limit accordingly
     'gasPrice': web3.to_wei('50', 'gwei'),
     'nonce': web3.eth.get_transaction_count(contract_address)
@@ -58,7 +58,7 @@ signed_tx = web3.eth.account.sign_transaction(transaction, private_key)
 tx_hash = web3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
 # Wait for transaction receipt
-tx_receipt = web3.eth.waitForTransactionReceipt(tx_hash)
+tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
 # Print transaction receipt
 print("Transaction receipt:", tx_receipt)
