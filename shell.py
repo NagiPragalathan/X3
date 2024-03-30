@@ -135,8 +135,8 @@ while True:
 		# Sign the transaction
 		signed_tx = W3.eth.account.sign_transaction(transaction, "9670e17a987dff3046b11123067faefb88bac64d0bf98a1062dc05ac535c71ea")
 		# Send the transaction
-		tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
 		try:
+			tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
 			# Send the transaction
 			tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
 			# Wait for transaction receipt
