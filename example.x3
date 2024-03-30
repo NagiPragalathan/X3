@@ -8,9 +8,9 @@ print(var)
 # {"ack":false}
 
 var counter = 0
-FUN inc(num)
+fun inc(num)
     var counter = counter + 1
-END
-FUN dec(num)
+end
+fun dec(num)
     var counter = counter - 1
-END
+end
