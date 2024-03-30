@@ -5,3 +5,11 @@ var = random.choice([1,2,3,4])
 print(var)
 ")
 
+# {"ack":false}
+VAR counter = 0
+FUN inc(num)
+    VAR counter = counter + 1
+END
+FUN dec(num)
+    VAR counter = counter - 1
+END

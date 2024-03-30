@@ -1,0 +1,46 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDEs
+.idea/
+.vscode/
+
+# Environment
+.env
+.env.*
+venv/
+env/
+env.bak/
+ENV/
+envs/
+
+# Compiled Python files
+*.pyc
+*.pyo
+
+# Miscellaneous
+*.bak
+*.swp
+*~
