@@ -32,10 +32,11 @@ ABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','new_contract_abi.json')
 PRIVATE_KEY = ""
 IS_WEB3 = False
 #-------------- Terminal---------------
-SIZE = os.get_terminal_size()
-COL = SIZE.columns
-LINE = SIZE.lines
-
+def do_line():
+  SIZE = os.get_terminal_size()
+  COL = SIZE.columns
+  LINE = SIZE.lines
+  print("-"*COL)
 #----------------- Error ---------------
 ErrorMsg = True
 PkErrorMsg = True
@@ -1875,15 +1876,18 @@ class BuiltInFunction(BaseFunction):
           repl =i.replace("#", "").strip()
           try:
             PYDATA = json.loads(i.replace("#", ""))
-            print(PYDATA.get('pk',''), PYDATA.get('provider',''))
             if PYDATA.get('provider',''): # Here the program verify the given json data
               PROVIDER = PYDATA["provider"]
               W3 =  Web3(Web3.HTTPProvider(PROVIDER))
               IS_WEB3 = True
               if PYDATA.get('ack','') and W3.is_connected():
+                do_line()
                 print("Provider Connected...")
+                do_line()
               else:
+                do_line()
                 print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
+                do_line()
             else:
               print("Provider is not Connected\nCheck the provided data"+str(PYDATA))
             if firstHash:
@@ -2302,35 +2306,13 @@ def run(fn, text):
     elapsed_time = end_time - start_time
     # print(elapsed_time)
 
-    ############################################### For Web3 ##########################################################
-    
-    # if IS_WEB3:
-    #   with open(ABI_OF_CONTRACT, 'r') as f:
-    #       abi = json.load(f)
-
-    #   contract = W3.eth.contract(address=CONTRACT_ADDRESS, abi=abi)
-
-    #   transaction = contract.functions.setData(str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), "0xECcF626e4bD9f685e2F7763121CE75619D0675bb").build_transaction({
-    #     'chainId': 80001,  # Polygon chain ID
-    #     'from': "0xECcF626e4bD9f685e2F7763121CE75619D0675bb",
-    #     'gas': 2100000,  # Adjust gas limit accordingly
-    #     'gasPrice': W3.to_wei('50', 'gwei'),
-    #     'nonce': W3.eth.get_transaction_count("0xECcF626e4bD9f685e2F7763121CE75619D0675bb")
-    #   })
-    #   signed_tx = W3.eth.account.sign_transaction(transaction, PRIVATE_KEY)
-    #   tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
-    #   tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
-    #   if PYDATA.get('ack',''):
-    #     print(tx_receipt)
-    # else:
-    #   if PYDATA.get('ack',''):
-    #     print("NO WEB3 Data FOUND")4
+  
     if IS_WEB3:
-      # result.value = []
       if PYDATA.get("account"):
         if PYDATA.get("pk"):
-          result.value = [{"ABI_OF_CONTRACT":ABI_OF_CONTRACT, "CONTRACT_ADDRESS":CONTRACT_ADDRESS, "PROVIDER":PROVIDER, "PRIVATE_KEY":PYDATA.get("pk")},[str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), int(elapsed_time), str(result), str(PYDATA.get("account"))], PYDATA]
+          result.value = [{"ABI_OF_CONTRACT":ABI_OF_CONTRACT, "CONTRACT_ADDRESS":CONTRACT_ADDRESS, "PROVIDER":PROVIDER, "PRIVATE_KEY":PYDATA.get("pk")},[str(lexer), str(tokens), str(text), str(ast), str(parser), str(context), "Success", str(global_symbol_table.get_all_data()), elapsed_time, str(result), str(PYDATA.get("account"))], PYDATA]
         elif PkErrorMsg and PYDATA.get("ack"):
+          PkErrorMsg = False
           print("Private Key Not Found: Please add Private Key of your wallet")
       elif ErrorMsg and PYDATA.get("ack"):
         ErrorMsg = False

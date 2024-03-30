@@ -1,13 +1,20 @@
 import basic
 import json
 from web3 import Web3
+import os
+
+def do_line():
+  SIZE = os.get_terminal_size()
+  COL = SIZE.columns
+  LINE = SIZE.lines
+  print("-"*COL)
+
 
 
 while True:
-	text = input('X3 > ')
+	text = input('X3 >>> ')
 	if text.strip() == "": continue
 	result, error = basic.run('<stdin>', text)
-	print(result, error)
 
 	if error:
 		print(error.as_string())
@@ -17,7 +24,7 @@ while True:
 		else:
 			print(repr(result))
 	else:
-		print("web3",result, result[0].get("ABI_OF_CONTRACT"))
+    ############################################### For Web3 ##########################################################
 		with open(result[0].get("ABI_OF_CONTRACT"), 'r') as f:
 			abi = json.load(f)
 		W3 = Web3(Web3.HTTPProvider(result[0].get("PROVIDER")))
@@ -33,4 +40,7 @@ while True:
 		tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
 		tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
 		if result[2].get('ack',''):
+			do_line()
 			print(tx_receipt)
+			print("Program Executed within: " + str(result[1][8])+"s")
+			do_line()
