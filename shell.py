@@ -52,10 +52,9 @@ while True:
 		end_time = time.time()	
 		# Calculate the elapsed time
 		elapsed_time = end_time - start_time
-		if result[2].get('ack',''):
+		if result[2].get('ack','') or result[2].get('ackBc','') :
 			do_line()
 			print(tx_receipt)
 		word_line("\nExecution Details\n")
 		print("Program Executed within: " + str(result[1][8])+"s","\t\t\t Blockchain Execution Time: " + str(elapsed_time))
-		print("\n")
 		do_line()
