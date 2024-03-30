@@ -14,6 +14,7 @@ import time
 from web3 import Web3
 from eth_account import Account
 
+
 #######################################
 # CONSTANTS
 #######################################
@@ -134,23 +135,6 @@ TT_EOF				= 'EOF'
 KEYWORDS = [
   'var',
   'and',
-<<<<<<< HEAD
-  'OR',
-  'NOT',
-  'IF',
-  'ELIF',
-  'ELSE',
-  'FOR',
-  'TO',
-  'STEP',
-  'WHILE',
-  'FUN',
-  'THEN',
-  'END',
-  'RETURN',
-  'CONTINUE',
-  'BREAK',
-=======
   'or',
   'not',
   'if',
@@ -166,7 +150,6 @@ KEYWORDS = [
   'return',
   'continue',
   'break',
->>>>>>> aeb5a0dc545eb2ccb920d59fd95cd905ea5ff34a
 ]
 
 class Token:
@@ -700,11 +683,7 @@ class Parser:
       if res.error: return res
       return res.success(VarAssignNode(var_name, expr))
 
-<<<<<<< HEAD
-    node = res.register(self.bin_op(self.comp_expr, ((TT_KEYWORD, 'and'), (TT_KEYWORD, 'OR'))))
-=======
     node = res.register(self.bin_op(self.comp_expr, ((TT_KEYWORD, 'and'), (TT_KEYWORD, 'or'))))
->>>>>>> aeb5a0dc545eb2ccb920d59fd95cd905ea5ff34a
 
     if res.error:
       return res.failure(InvalidSyntaxError(
