@@ -53,4 +53,5 @@ tx_hash = contract.functions.setData(
 tx_receipt = web3.eth.waitForTransactionReceipt(tx_hash)
 
 # Print transaction receipt
+print(tx_receipt.contractAddress)
 print("Transaction receipt:", tx_receipt)

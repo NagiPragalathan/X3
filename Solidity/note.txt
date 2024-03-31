@@ -2,6 +2,12 @@ batch process
 
 0x771F6344205A597664EC296FCE0EE8CB6d1F58c2
 
+Works:
+ - NFT mint
+ - image generation
+ - self deploy
+ - virbwire
+ - AIGen Function
 
 where x3
 
