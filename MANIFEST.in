@@ -1,0 +1,7 @@
+global-include *.txt *.py
+
+
+twine upload --repository-url https://upload.pypi.org/legacy/ --verbose --username NagiPragalathan --password pypi-AgEIcHlwaS5vcmcCJDMwNzM2YTNiLTk0ZWMtNDY3ZC1iZTM3LTM4OWZiOTZjM2FjNwACKlszLCJlNzI4ZWFjNi1iNTlmLTQ2YTYtYmJjZS0xY2NmMDBkNmE1YTYiXQAABiDQRowizekJ24q7jMammVs8Btd2nwKpvH5irQlw-7O1bQ dist/*
+
+
+python -m twine upload -u NagiPragalathan -p 7401268091 dist/*

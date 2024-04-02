@@ -4,14 +4,12 @@ from web3 import Web3
 import os
 import time
 from web3.middleware import geth_poa_middleware
-from pymongo import MongoClient
 
 
 CURRENT_PATH = os.getcwd()
 MABI_OF_CONTRACT = os.path.join(CURRENT_PATH, 'Solidity','mnew_contract_abi.json')
 ChainControl = 10
 uri = "mongodb+srv://nagi:nagi@cluster0.ohv5gsc.mongodb.net/nagidb"
-client = MongoClient(uri)
 
 
 def do_line():
@@ -92,31 +90,6 @@ while True:
 
 		#-----------------------------------mango----------------------------------------------------
 
-		data = {
-			"lex": result[1][0],
-			"tokens": result[1][1],
-			"fullCode": result[1][2],
-			"ast": result[1][3],
-			"parser": result[1][4],
-			"result": result[1][5],
-			"context": result[1][6],
-			"symbolTable": result[1][7],
-			"executionTime": result[1][8],
-			"resultValue": result[1][9],
-			"account": result[1][10],
-			"type": "polygon",
-			"transaction":tx_receipt
-		}
-		db = client.X3
-		# Access a specific collection within the database
-		collection = db.X3
-		# Insert the document into the collection
-		insert_result = collection.insert_one(data)
-		# Check if the insertion was successful
-		if insert_result.inserted_id:
-			print("Data inserted successfully.")
-		else:
-			print("Failed to insert document.")
 
 		#-----------------------------------Core----------------------------------------------------
 		with open(os.path.join(CURRENT_PATH, 'Solidity',"simple.json"), 'r') as f:
@@ -141,8 +114,8 @@ while True:
 			tx_hash = W3.eth.send_raw_transaction(signed_tx.rawTransaction)
 			# Wait for transaction receipt
 			tx_receipt = W3.eth.wait_for_transaction_receipt(tx_hash)
-		except:
-			pass
+		except Exception as e:
+			print(e)
 
 		#---------------------------------------------------------------------------------------------
 

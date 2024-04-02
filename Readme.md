@@ -71,6 +71,6 @@ We welcome contributions from the community to help improve X3 and expand its ca
 
 X3 is licensed under the MIT License, allowing for flexibility and openness in its usage and distribution.
 
-## Contact
+## Document
 
-For inquiries, feedback, or support, please contact us at contact@x3-lang.com.
+To Know more check out blog https://manis-organization-2.gitbook.io/untitled-1
